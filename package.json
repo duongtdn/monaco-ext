@@ -4,7 +4,9 @@
   "description": "Extend monaco-editor with feature interface",
   "main": "dist/index.js",
   "scripts": {
-    "start": "webpack serve --config webpack.dev.config.js --port 3800 --host 0.0.0.0"
+    "start": "webpack serve --config webpack.dev.config.js --port 3800 --host 0.0.0.0",
+    "utest": "jest --config=jest.unittest.config.js",
+    "test": "jest --config=jest.config.js"
   },
   "repository": {
     "type": "git",
@@ -29,9 +31,12 @@
     "@babel/plugin-transform-object-rest-spread": "^7.25.9",
     "@babel/preset-env": "^7.26.9",
     "babel-loader": "^10.0.0",
+    "core-js": "^3.41.0",
     "css-loader": "^7.1.2",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "monaco-editor-webpack-plugin": "^7.1.0",
+    "regenerator-runtime": "^0.14.1",
     "style-loader": "^4.0.0",
     "webpack": "^5.98.0",
     "webpack-cli": "^6.0.1",
