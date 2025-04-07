@@ -1,11 +1,11 @@
 {
   "name": "monaco-ext",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Extend monaco-editor with feature interface",
   "main": "dist/index.js",
   "scripts": {
 		"clean": "rm -rf dist",
-		"build": "npm run clean && babel src --out-dir dist --source-maps --ignore \"**/__tests__/**,**/__mocks__/**\"",
+		"build": "npm run clean && babel src --out-dir dist --source-maps --ignore \"**/__tests__/**,**/__mocks__/**\" && mkdir -p dist/themes && cp src/themes/*.json dist/themes/",
 		"prepare": "npm run build",
 		"prepublishOnly": "npm run build",
     "start": "webpack serve --config webpack.dev.config.js --port 3800 --host 0.0.0.0",
