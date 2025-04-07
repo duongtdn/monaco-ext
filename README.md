@@ -8,6 +8,14 @@ A highly customizable and extensible code editor built on top of Monaco Editor (
 npm install monaco-ext monaco-editor --save
 ```
 
+## Example Demo
+
+```bash
+npm start
+```
+
+Open browser at `localhost:3800`
+
 ## Usage
 
 ### Basic Setup
