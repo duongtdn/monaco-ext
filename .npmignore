@@ -1,8 +1,10 @@
 src/
-demo/
+example/
 test/
 node_modules/
 webpack.*
 npm-debug.*
-github/
+.github/
 .vscode/
+**/__tests__/
+**/__mocks__/
