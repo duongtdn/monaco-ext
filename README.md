@@ -74,41 +74,6 @@ const highlight = editor.features.add('highlight', new HighLight());
 editor.eventChannel.emit('editor.highlight', [5, 6, 7]);
 ```
 
-### Required CSS Styles for Features
-
-For features like ReadOnlyLines and HighLight to work properly, you'll need to add appropriate CSS classes to your application:
-
-```css
-/* Basic styles for read-only lines */
-.read-only-code-line {
-  cursor: pointer !important;
-  opacity: .8;
-}
-
-/* Theme-specific styles for read-only lines */
-.light .read-only-code-line {
-  background: #f1f1f1;
-}
-
-.dark .read-only-code-line {
-  background: #414141;
-}
-
-/* Style for read-only text */
-.read-only-code-text {
-  cursor: pointer;
-}
-
-/* Theme-specific styles for highlighted lines */
-.light .highlight-code-line {
-  background: #ffeb3b !important;
-}
-
-.dark .highlight-code-line {
-  background: #f44336 !important;
-}
-```
-
 ### Removing Features
 
 ```javascript
