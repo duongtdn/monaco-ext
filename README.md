@@ -1,6 +1,6 @@
 # Monaco-Ext Editor
 
-A highly customizable and extensible code editor built on top of Monaco Editor (the same editor that powers VS Code). This library provides a clean and simple API to enhance your editing experience with features like line selection, read-only regions, auto-resize, and highlighting.
+A highly customizable and extensible code editor built on top of Monaco Editor (the same editor that powers VS Code). This library provides a clean and simple API to enhance your editing experience with features like line selection, read-only lines, auto-resize, and highlighting.
 
 ## Installation
 
@@ -24,7 +24,7 @@ const editor = new ExtendableCodeEditor(
     minimap: { enabled: false },
     lineNumberOffset: 0,
     wordWrap: true,
-    readOnlyLines: false,
+    readOnly: false,
   }
 );
 ```
@@ -33,7 +33,7 @@ const editor = new ExtendableCodeEditor(
 
 ```javascript
 // Load available themes
-ExtendableCodeEditor.loadThemes(() => import('../themes'))
+ExtendableCodeEditor.loadThemes(() => import('monaco-ext/themes'))
   .then(() => {
     // Set a theme
     ExtendableCodeEditor.changeTheme('github-dark');
@@ -46,21 +46,21 @@ ExtendableCodeEditor.loadThemes(() => import('../themes'))
 import { ReadOnlyLines, LineSelection, HighLight, AutoResizeHeight } from 'monaco-ext/features';
 
 // Make specific lines read-only
-const readOnlyLines = editor.features.add('readOnlyLines', new ReadOnlyLines([1, 2, 3, 4]));
+const readOnlyLines = editor.features.add('readOnlyLines', new ReadOnlyLines([1, 2, 3, 10]));
 
 // Enable line selection events
 const lineSelection = editor.features.add('lineSelection', new LineSelection());
+
+// Listen to line selection events
+editor.eventChannel.addListener('editor.selectLine', (lineNumber) => {
+  console.log(`Line ${lineNumber} selected`);
+});
 
 // Enable auto-resize based on content
 const autoResize = editor.features.add('autoResize', new AutoResizeHeight());
 
 // Add highlighting capability
 const highlight = editor.features.add('highlight', new HighLight());
-
-// Listen to line selection events
-editor.eventChannel.addListener('editor.selectLine', (lineNumber) => {
-  console.log(`Line ${lineNumber} selected`);
-});
 
 // Highlight specific lines
 editor.eventChannel.emit('editor.highlight', [5, 6, 7]);
@@ -106,15 +106,19 @@ For features like ReadOnlyLines and HighLight to work properly, you'll need to a
 ```javascript
 // Remove a feature
 editor.features.remove('readOnlyLines');
+```
 
+### Listing All Active Features
+
+```javascript
 // List all active features
 const activeFeatures = editor.features.list();
 console.log(activeFeatures);
 ```
 
-## Available Features
+## Built-in Features
 
-### readOnlyLines
+### ReadOnlyLines
 
 Makes specific lines in the editor read-only and visually indicates them with a style.
 
@@ -127,6 +131,32 @@ readOnlyLines.activate([4, 5, 6]);
 
 // Remove read-only for all lines
 readOnlyLines.deactivate();
+```
+
+#### Required CSS Styles for ReadOnlyLines Features
+
+You'll need to add appropriate CSS classes to your application to visually indicate read-only lines:
+
+```css
+/* Basic styles for read-only lines */
+.read-only-code-line {
+  cursor: pointer !important;
+  opacity: .8;
+}
+
+/* Theme-specific styles for read-only lines */
+.light .read-only-code-line {
+  background: #f1f1f1;
+}
+
+.dark .read-only-code-line {
+  background: #414141;
+}
+
+/* Style for read-only text */
+.read-only-code-text {
+  cursor: pointer;
+}
 ```
 
 **Note about selection behavior**: When a selection overlaps with any read-only line, the edit operation is prevented entirely. This means if a user selects a range of lines that includes both editable and read-only lines, no changes will be applied to preserve the integrity of the read-only content.
@@ -155,6 +185,21 @@ const highlight = editor.features.add('highlight', new HighLight());
 
 // Highlight lines 5, 6, and 7
 editor.eventChannel.emit('editor.highlight', [5, 6, 7]);
+```
+
+#### Required CSS Styles for HighLight Features
+
+You'll need to add appropriate CSS classes to your application to visually indicate highlighted lines:
+
+```css
+/* Theme-specific styles for highlighted lines */
+.light .highlight-code-line {
+  background: #ffeb3b !important;
+}
+
+.dark .highlight-code-line {
+  background: #f44336 !important;
+}
 ```
 
 ### AutoResizeHeight
@@ -203,7 +248,7 @@ new ExtendableCodeEditor(element, options)
 
 #### Static Methods
 
-- `loadThemes(fn)`: Load a set of themes
+- `loadThemes(Promise)`: Load a set of themes
 - `changeTheme(themeName)`: Change the current theme
 - `colorizeElement(...)`: Colorize a DOM element with code
 
@@ -236,7 +281,7 @@ editor.eventChannel.emit('eventName', ...args);
 You can create custom features by extending the Feature interface:
 
 ```javascript
-import { Feature } from 'monaco-ext';
+import { Feature } from 'monaco-ext/features';
 
 export default class CustomFeature extends Feature {
   activate = () => {
