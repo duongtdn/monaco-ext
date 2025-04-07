@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monaco-Ext Example</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 12px;
+            background-color: #007acc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #005999;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .editors-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .editor-wrapper {
+            flex: 1;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .editor-header {
+            background-color: #f0f0f0;
+            padding: 10px 15px;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #editor-container {
+            height: 400px;
+            width: 100%;
+        }
+
+        .status {
+            width: 250px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            font-family: monospace;
+            align-self: flex-start;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .highlight-controls {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .input-line {
+            width: 60px;
+            padding: 5px;
+        }
+    </style>
+
+    <style>
+
+      .read-only-code-line {
+        cursor: pointer !important;
+			  opacity: .8;
+      }
+
+			.light .read-only-code-line {
+			  background: #f1f1f1;
+			}
+
+			.dark .read-only-code-line {
+			  background: #414141;
+			}
+
+			.read-only-code-text {
+        cursor: pointer;
+        /* opacity: .8; */
+      }
+
+			.light .highlight-code-line { background: #ffeb3b !important; }
+      .dark .highlight-code-line { background: #f44336 !important; }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Monaco-Ext Editor Demo</h1>
+
+        <div class="controls">
+            <select id="theme-selector">
+								<option value="vs-light">VSCode Light</option>
+                <option value="vs-dark">VSCode Dark</option>
+                <option value="github-light">GitHub Light</option>
+                <option value="github-dark">GitHub Dark</option>
+                <option value="solarized-light">Solarized Light</option>
+                <option value="solarized-dark">Solarized Dark</option>
+            </select>
+
+            <button id="toggle-readonly">Enable Read-only Lines (1-3 & 5)</button>
+            <button id="toggle-feature-lineSel">Enable Line Selection</button>
+            <button id="toggle-feature-highlight">Enable Highlight</button>
+            <button id="toggle-feature-resize">Enable Auto Resize</button>
+        </div>
+
+        <div class="highlight-controls">
+            <input type="number" id="line-input" class="input-line" placeholder="Line #" min="1">
+            <button id="highlight-line">Highlight Line</button>
+            <button id="clear-highlights">Clear Highlights</button>
+        </div>
+
+        <div class="editors-container light">
+            <div class="editor-wrapper">
+                <div class="editor-header">
+                    <span>Code Editor</span>
+                </div>
+                <div id="editor-container"></div>
+            </div>
+            <div class="status" id="status">Events will appear here...</div>
+        </div>
+    </div>
+
+    <!-- Load app.js as a module -->
+    <script src="assets/app.js" type="text/javascript"></script>
+</body>
+</html>

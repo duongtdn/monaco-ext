@@ -1,0 +1,45 @@
+@startuml
+
+class ExtendableCodeEditor #LightBlue
+
+interface Feature {
+  Editor editor
+  EventChannel evt
+}
+
+interface Editor
+
+
+ExtendableCodeEditor o-- Feature
+
+class ReadOnly implements Feature
+
+class OnSelectLine implements Feature
+
+ExtendableCodeEditor o-left- Editor
+
+class MonacoEditor implements Editor
+
+MonacoEditor --o ReadOnly
+MonacoEditor --o OnSelectLine
+
+class EventChannel
+
+ExtendableCodeEditor *-right- EventChannel
+
+
+class TabManager
+
+TabManager o-left- EventChannel
+
+interface Tab {
+  EventChannel evt
+}
+
+TabManager o-down- Tab
+
+class Terminal implements Tab
+
+
+
+@enduml
