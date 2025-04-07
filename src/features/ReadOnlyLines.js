@@ -58,7 +58,13 @@ export default class ReadOnlyLines extends Feature {
 
   isChangeInReadOnlyLines = (range, readOnlyLines) => {
     const { startLineNumber, endLineNumber } = range;
-    return readOnlyLines.indexOf(startLineNumber) !== -1 || readOnlyLines.indexOf(endLineNumber) !== -1;
+    // Check if any line in the range from startLineNumber to endLineNumber is readonly
+    for (let line = startLineNumber; line <= endLineNumber; line++) {
+      if (readOnlyLines.indexOf(line) !== -1) {
+        return true;
+      }
+    }
+    return false;
   }
 
   countNewLinesInChange = (change) => {

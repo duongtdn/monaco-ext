@@ -129,6 +129,8 @@ readOnlyLines.activate([4, 5, 6]);
 readOnlyLines.deactivate();
 ```
 
+**Note about selection behavior**: When a selection overlaps with any read-only line, the edit operation is prevented entirely. This means if a user selects a range of lines that includes both editable and read-only lines, no changes will be applied to preserve the integrity of the read-only content.
+
 ### LineSelection
 
 Adds line selection events that fire when a user clicks on a line.
