@@ -5,7 +5,7 @@ A highly customizable and extensible code editor built on top of Monaco Editor (
 ## Installation
 
 ```bash
-npm install monaco-ext --save
+npm install monaco-ext monaco-editor --save
 ```
 
 ## Usage
