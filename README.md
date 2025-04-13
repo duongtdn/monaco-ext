@@ -41,7 +41,8 @@ const editor = new ExtendableCodeEditor(
 
 ```javascript
 // Load available themes
-ExtendableCodeEditor.loadThemes(() => import('monaco-ext/themes'))
+const themes = import('monaco-ext/dist/themes')
+ExtendableCodeEditor.loadThemes(() => Promise.resolve(themes))
   .then(() => {
     // Set a theme
     ExtendableCodeEditor.changeTheme('github-dark');
@@ -51,7 +52,7 @@ ExtendableCodeEditor.loadThemes(() => import('monaco-ext/themes'))
 ### Adding Features
 
 ```javascript
-import { ReadOnlyLines, LineSelection, HighLight, AutoResizeHeight } from 'monaco-ext/features';
+import { ReadOnlyLines, LineSelection, HighLight, AutoResizeHeight } from 'monaco-ext/dist/features';
 
 // Make specific lines read-only
 const readOnlyLines = editor.features.add('readOnlyLines', new ReadOnlyLines([1, 2, 3, 10]));
