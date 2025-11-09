@@ -4,10 +4,10 @@
   "description": "Extend monaco-editor with feature interface",
   "main": "dist/index.js",
   "scripts": {
-		"clean": "rm -rf dist",
-		"build": "npm run clean && babel src --out-dir dist --source-maps --ignore \"**/__tests__/**,**/__mocks__/**\" && mkdir -p dist/themes && cp src/themes/*.json dist/themes/",
-		"prepare": "npm run build",
-		"prepublishOnly": "npm run build",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && babel src --out-dir dist --source-maps --ignore \"**/__tests__/**,**/__mocks__/**\" && mkdir -p dist/themes && cp src/themes/*.json dist/themes/",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
     "start": "webpack serve --config webpack.dev.config.js --port 3800 --host 0.0.0.0",
     "utest": "jest --config=jest.unittest.config.js",
     "test": "jest --config=jest.config.js"
@@ -39,12 +39,18 @@
     "css-loader": "^7.1.2",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-		"monaco-editor": "^0.52.2",
+    "monaco-editor": "^0.52.2",
     "monaco-editor-webpack-plugin": "^7.1.0",
+    "path-browserify": "^1.0.1",
     "regenerator-runtime": "^0.14.1",
     "style-loader": "^4.0.0",
     "webpack": "^5.98.0",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.1"
+  },
+  "dependencies": {
+    "monaco-editor-textmate": "^4.0.0",
+    "monaco-textmate": "^3.0.1",
+    "onigasm": "^2.2.5"
   }
 }

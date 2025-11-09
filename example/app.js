@@ -1,10 +1,12 @@
 // Import the necessary components from monaco-ext
-import { ExtendableCodeEditor } from 'monaco-ext';
-import { ReadOnlyLines, LineSelection, HighLight, AutoResizeHeight } from 'monaco-ext/features';
-import themes from 'monaco-ext/themes';
+import { ExtendableCodeEditor } from '../src/index.js';
+import { ReadOnlyLines, LineSelection, HighLight, AutoResizeHeight } from '../src/features/index.js';
+import themes from '../src/themes/index.js';
+import * as monaco from 'monaco-editor';
 
 // Sample code for the editor
-const sampleCode = `// Monaco-Ext Demo
+const sampleCode = {
+  javascript: `// Monaco-Ext Demo with TextMate Syntax Highlighting
 // This is a demo of the Monaco-Ext editor
 // Try selecting lines, highlighting, and other features
 
@@ -18,11 +20,25 @@ function factorial(n) {
   return n * factorial(n - 1);
 }
 
+// Regular expressions examples
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+// Test regex patterns
+const testEmail = "user@example.com";
+const isValidEmail = emailRegex.test(testEmail);
+console.log(\`Email \${testEmail} is \${isValidEmail ? 'valid' : 'invalid'}\`);
+
+// String replace with regex
+const text = "The quick brown fox jumps over the lazy dog";
+const replacedText = text.replace(/\\b\w{4}\\b/g, '****'); // Replace 4-letter words
+console.log("Original:", text);
+console.log("Replaced:", replacedText);
+
 // Calculate some factorials
 console.log("Factorial of 5:", factorial(5));
 console.log("Factorial of 10:", factorial(10));
 
-// Example of a class
+// Example of a class with template literals
 class Person {
   constructor(name, age) {
     this.name = name;
@@ -36,11 +52,566 @@ class Person {
 
 const alice = new Person("Alice", 28);
 console.log(alice.greet());
-`;
+
+// Arrow functions and destructuring
+const users = [
+  { name: "John", age: 25, city: "New York" },
+  { name: "Jane", age: 30, city: "San Francisco" }
+];
+
+const adultUsers = users
+  .filter(({ age }) => age >= 18)
+  .map(({ name, city }) => ({ name, city }));
+
+console.log("Adult users:", adultUsers);
+`,
+
+  javascriptreact: `// Monaco-Ext JSX/React Demo with TextMate Syntax Highlighting
+import React, { useState, useEffect } from 'react';
+
+// Component with hooks and JSX
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Async data fetching with regex validation
+    const fetchUser = async () => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^\(\d{3}\)\s\d{3}-\d{4}$/;
+
+      try {
+        const response = await fetch(\`/api/users/\${userId}\`);
+        const userData = await response.json();
+
+        // Validate email format
+        if (userData.email && !emailRegex.test(userData.email)) {
+          console.warn('Invalid email format:', userData.email);
+        }
+
+        setUser(userData);
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userId) {
+      fetchUser();
+    }
+  }, [userId]);
+
+  // Event handlers
+  const handleEdit = () => {
+    console.log('Edit user:', user?.name);
+  };
+
+  const handleDelete = () => {
+    const confirmRegex = /^(yes|y)$/i;
+    const confirmation = prompt('Type "yes" to confirm deletion:');
+
+    if (confirmation && confirmRegex.test(confirmation)) {
+      console.log('User deleted');
+    }
+  };
+
+  // Conditional rendering with JSX
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner" />
+        <p>Loading user profile...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="error-container">
+        <h2>User not found</h2>
+        <p>The requested user could not be loaded.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="user-profile">
+      <header className="profile-header">
+        <img
+          src={user.avatar || '/default-avatar.png'}
+          alt={\`\${user.name}'s avatar\`}
+          className="avatar"
+        />
+        <div className="user-info">
+          <h1>{user.name}</h1>
+          <p className="user-title">{user.title}</p>
+          <span className="user-status" data-status={user.active ? 'active' : 'inactive'}>
+            {user.active ? '● Online' : '○ Offline'}
+          </span>
+        </div>
+      </header>
+
+      <section className="contact-info">
+        <h3>Contact Information</h3>
+        <div className="contact-grid">
+          <div className="contact-item">
+            <strong>Email:</strong>
+            <a href={\`mailto:\${user.email}\`}>{user.email}</a>
+          </div>
+          <div className="contact-item">
+            <strong>Phone:</strong>
+            <a href={\`tel:\${user.phone}\`}>{user.phone}</a>
+          </div>
+          <div className="contact-item">
+            <strong>Location:</strong>
+            <span>{user.location}</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="user-stats">
+        <h3>Statistics</h3>
+        <div className="stats-grid">
+          {user.stats?.map((stat, index) => (
+            <div key={index} className="stat-card">
+              <div className="stat-value">{stat.value}</div>
+              <div className="stat-label">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="actions">
+        <button
+          className="btn btn-primary"
+          onClick={handleEdit}
+          disabled={!user.canEdit}
+        >
+          Edit Profile
+        </button>
+        <button
+          className="btn btn-danger"
+          onClick={handleDelete}
+          disabled={!user.canDelete}
+        >
+          Delete User
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Higher-order component example
+const withLoading = (WrappedComponent) => {
+  return function WithLoadingComponent(props) {
+    return props.loading ? (
+      <div className="loading">Loading...</div>
+    ) : (
+      <WrappedComponent {...props} />
+    );
+  };
+};
+
+export default UserProfile;
+export { withLoading };
+`,
+
+  python: `# Monaco-Ext Python Demo with TextMate Syntax Highlighting
+# This demonstrates Python syntax highlighting with regex examples
+import re
+
+def factorial(n: int) -> int:
+    """Calculate factorial recursively."""
+    # Base case
+    if n <= 1:
+        return 1
+    # Recursive case
+    return n * factorial(n - 1)
+
+# Regular expression examples
+email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+phone_pattern = r'^\(\d{3}\)\s\d{3}-\d{4}$'
+
+# URL validation pattern
+url_pattern = r'^https?://(?:[-\w.])+(?::[0-9]+)?(?:/(?:[\w/_.])*)?(?:\?(?:[\w&=%.])*)?(?:#(?:\w*))?$'
+
+# More complex regex examples
+hex_color_pattern = r'^#(?:[0-9a-fA-F]{3}){1,2}$'
+ipv4_pattern = r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+
+# Password strength regex (at least 8 chars, 1 upper, 1 lower, 1 digit)
+password_pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$'
+
+# Email validation function
+def validate_email(email: str) -> bool:
+    return bool(re.match(email_pattern, email))
+
+# Test regex patterns with examples
+test_data = [
+    ("user@example.com", email_pattern),
+    ("invalid.email", email_pattern),
+    ("test@domain.co.uk", email_pattern),
+    ("(555) 123-4567", phone_pattern),
+    ("555-1234", phone_pattern),
+    ("#FF0000", hex_color_pattern),
+    ("#123", hex_color_pattern),
+    ("192.168.1.1", ipv4_pattern),
+    ("999.999.999.999", ipv4_pattern)
+]
+
+for test_string, pattern in test_data:
+    is_match = bool(re.match(pattern, test_string))
+    print(f"'{test_string}' matches pattern: {is_match}")
+
+# Calculate some factorials
+print(f"Factorial of 5: {factorial(5)}")
+print(f"Factorial of 10: {factorial(10)}")
+
+# Example class with type hints
+class Person:
+    def __init__(self, name: str, age: int):
+        self.name = name
+        self.age = age
+
+    def greet(self) -> str:
+        return f"Hello, my name is {self.name} and I am {self.age} years old."
+
+    @property
+    def is_adult(self) -> bool:
+        return self.age >= 18
+
+# Create instances
+alice = Person("Alice", 28)
+print(alice.greet())
+print(f"Alice is adult: {alice.is_adult}")
+`,
+
+  jsx: `// Monaco-Ext JSX/React Demo with TextMate Syntax Highlighting
+import React, { useState, useEffect } from 'react';
+
+// Component with hooks and regex validation examples
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({ email: '', phone: '', website: '' });
+  const [validationErrors, setValidationErrors] = useState({});
+
+  // Comprehensive regex patterns for validation
+  const validationPatterns = {
+    email: /^[a-zA-Z0-9.!#$%&'*+/=?^_\`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+    phone: /^(\+?\d{1,4}[\s-]?)?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{4}$/,
+    website: /^https?:\/\/(?:[-\w.])+(?::[0-9]+)?(?:\/(?:[\w/_.])*)?(?:\?(?:[\w&=%.])*)?(?:#(?:\w*))?$/,
+    zipCode: /^\d{5}(-\d{4})?$/,
+    creditCard: /^\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}$/,
+    strongPassword: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+  };
+
+  useEffect(() => {
+    // Async data fetching with input validation
+    const fetchUser = async () => {
+      if (!userId || !/^\d+$/.test(userId.toString())) {
+        console.warn('Invalid user ID format');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(\`/api/users/\${userId}\`);
+        const userData = await response.json();
+
+        // Validate fetched data using regex
+        if (userData.email && !validationPatterns.email.test(userData.email)) {
+          console.warn('Server returned invalid email format:', userData.email);
+        }
+
+        setUser(userData);
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
+
+  // Real-time form validation with regex
+  const validateField = (field, value) => {
+    const errors = { ...validationErrors };
+
+    switch (field) {
+      case 'email':
+        if (value && !validationPatterns.email.test(value)) {
+          errors.email = 'Please enter a valid email address';
+        } else {
+          delete errors.email;
+        }
+        break;
+
+      case 'phone':
+        if (value && !validationPatterns.phone.test(value)) {
+          errors.phone = 'Phone format: (123) 456-7890 or +1-123-456-7890';
+        } else {
+          delete errors.phone;
+        }
+        break;
+
+      case 'website':
+        if (value && !validationPatterns.website.test(value)) {
+          errors.website = 'Please enter a valid URL (http:// or https://)';
+        } else {
+          delete errors.website;
+        }
+        break;
+    }
+
+    setValidationErrors(errors);
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    validateField(field, value);
+  };
+
+  // Text processing with regex examples
+  const processUserText = (text) => {
+    // Replace URLs with links
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const withLinks = text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
+
+    // Highlight @mentions
+    const mentionRegex = /@(\w+)/g;
+    const withMentions = withLinks.replace(mentionRegex, '<span class="mention">@$1</span>');
+
+    // Format hashtags
+    const hashtagRegex = /#(\w+)/g;
+    const withHashtags = withMentions.replace(hashtagRegex, '<span class="hashtag">#$1</span>');
+
+    return withHashtags;
+  };
+
+  // Event handlers
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Final validation before submission
+    const errors = {};
+    Object.keys(validationPatterns).forEach(field => {
+      const value = formData[field];
+      if (value && !validationPatterns[field].test(value)) {
+        errors[field] = \`Invalid \${field} format\`;
+      }
+    });
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    console.log('Form submitted with valid data:', formData);
+  };
+
+  const handleDelete = () => {
+    // Confirmation with regex validation
+    const confirmRegex = /^(yes|y|confirm)$/i;
+    const confirmation = prompt('Type "yes", "y", or "confirm" to delete:');
+
+    if (confirmation && confirmRegex.test(confirmation.trim())) {
+      console.log('User deletion confirmed');
+    } else {
+      console.log('Deletion cancelled');
+    }
+  };
+
+  // Conditional rendering with JSX
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner" />
+        <p>Loading user profile...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="error-container">
+        <h2>User not found</h2>
+        <p>The requested user could not be loaded.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="user-profile">
+      <header className="profile-header">
+        <img
+          src={user.avatar || '/default-avatar.png'}
+          alt={\`\${user.name}'s avatar\`}
+          className="avatar"
+          onError={(e) => { e.target.src = '/default-avatar.png'; }}
+        />
+        <div className="user-info">
+          <h1>{user.name}</h1>
+          <p className="user-title">{user.title}</p>
+          <span
+            className={\`user-status status-\${user.active ? 'active' : 'inactive'}\`}
+            data-status={user.active ? 'active' : 'inactive'}
+          >
+            {user.active ? '● Online' : '○ Offline'}
+          </span>
+        </div>
+      </header>
+
+      <section className="contact-info">
+        <h3>Contact Information</h3>
+        <form onSubmit={handleSubmit} className="contact-form">
+          <div className="form-group">
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              placeholder="user@example.com"
+              className={validationErrors.email ? 'error' : ''}
+            />
+            {validationErrors.email && (
+              <span className="error-message">{validationErrors.email}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="phone">Phone:</label>
+            <input
+              type="tel"
+              id="phone"
+              value={formData.phone}
+              onChange={(e) => handleInputChange('phone', e.target.value)}
+              placeholder="(555) 123-4567"
+              className={validationErrors.phone ? 'error' : ''}
+            />
+            {validationErrors.phone && (
+              <span className="error-message">{validationErrors.phone}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="website">Website:</label>
+            <input
+              type="url"
+              id="website"
+              value={formData.website}
+              onChange={(e) => handleInputChange('website', e.target.value)}
+              placeholder="https://example.com"
+              className={validationErrors.website ? 'error' : ''}
+            />
+            {validationErrors.website && (
+              <span className="error-message">{validationErrors.website}</span>
+            )}
+          </div>
+
+          <button type="submit" className="btn btn-primary">
+            Update Contact Info
+          </button>
+        </form>
+      </section>
+
+      <section className="user-stats">
+        <h3>Statistics</h3>
+        <div className="stats-grid">
+          {user.stats?.map((stat, index) => (
+            <div key={\`stat-\${index}\`} className="stat-card">
+              <div className="stat-value">{stat.value}</div>
+              <div className="stat-label">{stat.label}</div>
+              <div className="stat-trend">
+                {stat.trend > 0 ? '📈' : stat.trend < 0 ? '📉' : '➡️'}
+              </div>
+            </div>
+          )) || (
+            <p className="no-stats">No statistics available</p>
+          )}
+        </div>
+      </section>
+
+      <section className="user-bio">
+        <h3>Bio</h3>
+        <div
+          className="bio-content"
+          dangerouslySetInnerHTML={{
+            __html: user.bio ? processUserText(user.bio) : 'No bio available'
+          }}
+        />
+      </section>
+
+      <div className="actions">
+        <button
+          className="btn btn-primary"
+          onClick={() => console.log('Edit profile clicked')}
+          disabled={!user.canEdit}
+        >
+          Edit Profile
+        </button>
+        <button
+          className="btn btn-danger"
+          onClick={handleDelete}
+          disabled={!user.canDelete}
+        >
+          Delete User
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Higher-order component example with regex validation
+const withValidation = (WrappedComponent, validationRules) => {
+  return function WithValidationComponent(props) {
+    const [isValid, setIsValid] = useState(true);
+
+    useEffect(() => {
+      const validateProps = () => {
+        for (const [key, rule] of Object.entries(validationRules)) {
+          const value = props[key];
+          if (value !== undefined && !rule.test(value)) {
+            setIsValid(false);
+            return;
+          }
+        }
+        setIsValid(true);
+      };
+
+      validateProps();
+    }, [props]);
+
+    if (!isValid) {
+      return (
+        <div className="validation-error">
+          Invalid props provided to component
+        </div>
+      );
+    }
+
+    return <WrappedComponent {...props} />;
+  };
+};
+
+// Usage example with email validation HOC
+const EmailComponent = ({ email }) => <div>Email: {email}</div>;
+const ValidatedEmailComponent = withValidation(EmailComponent, {
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+});
+
+export default UserProfile;
+export { withValidation, ValidatedEmailComponent };
+`
+};
 
 // DOM elements
 const statusElement = document.getElementById('status');
 const themeSelector = document.getElementById('theme-selector');
+const languageSelector = document.getElementById('language-selector');
 const toggleReadonlyBtn = document.getElementById('toggle-readonly');
 const toggleLineSelBtn = document.getElementById('toggle-feature-lineSel');
 const toggleHighlightBtn = document.getElementById('toggle-feature-highlight');
@@ -48,6 +619,7 @@ const toggleResizeBtn = document.getElementById('toggle-feature-resize');
 const lineInput = document.getElementById('line-input');
 const highlightLineBtn = document.getElementById('highlight-line');
 const clearHighlightsBtn = document.getElementById('clear-highlights');
+const debugTextMateBtn = document.getElementById('debug-textmate');
 
 // Feature state tracking
 const featureState = {
@@ -76,24 +648,106 @@ let autoResizeFeature;
 
 async function initEditor() {
   try {
+    updateStatus('Initializing editor...');
+
+    // Try to load TextMate grammars first
+    try {
+      updateStatus('Loading TextMate grammars...');
+      console.log('Starting TextMate grammar loading...');
+      await ExtendableCodeEditor.loadTextMateGrammars();
+      console.log('TextMate grammars loaded successfully');
+      updateStatus('TextMate grammars loaded successfully');
+
+      // Get supported languages
+      const supportedLanguages = ExtendableCodeEditor.getSupportedLanguages();
+      console.log('Supported languages:', supportedLanguages);
+      updateStatus(`Supported languages: ${supportedLanguages.join(', ')}`);
+
+      // Also check what languages Monaco knows about
+      const registeredLanguages = monaco.languages.getLanguages();
+      console.log('Monaco registered languages:', registeredLanguages.map(l => l.id));
+      updateStatus(`Monaco languages: ${registeredLanguages.map(l => l.id).join(', ')}`);
+    } catch (textMateError) {
+      console.error('TextMate loading failed:', textMateError);
+      updateStatus(`TextMate loading failed: ${textMateError.message}`);
+      updateStatus('Using basic Monaco highlighting instead');
+    }
+
     // Create a new editor instance
+    updateStatus('Creating editor instance...');
     editor = new ExtendableCodeEditor(
       document.getElementById('editor-container'),
       {
         language: 'javascript',
-        value: sampleCode,
+        value: sampleCode.javascript,
         minimap: { enabled: true },
         lineNumberOffset: 0,
         wordWrap: true,
         readOnly: false,
+        enableTextMate: true, // Enable TextMate syntax highlighting
       }
     );
+    updateStatus('Editor instance created');
 
-    // Load available themes - updated path to match webpack alias
+    // Test if TextMate is actually working
+    const model = editor.editor.getModel();
+    if (model) {
+      // Set a test code snippet that should show TextMate vs basic highlighting
+      const testSnippet = 'const test = `Hello ${name}!`; // template literal';
+      model.setValue(testSnippet);
+
+      // Try to get tokenization info
+      try {
+        const tokens = monaco.editor.tokenize(testSnippet, 'javascript');
+        updateStatus('OK Tokenization working, tokens: ' + tokens.length);
+
+        // Look for TextMate-specific tokens
+        const hasTextMateTokens = tokens.some(tokenLine =>
+          tokenLine.some(token =>
+            token.type && (
+              token.type.includes('string.template') ||
+              token.type.includes('punctuation.definition.template') ||
+              token.type.includes('meta.template.expression')
+            )
+          )
+        );
+
+        if (hasTextMateTokens) {
+          updateStatus('OK TextMate appears to be working! (found template literal tokens)');
+        } else {
+          updateStatus('⚠ TextMate may not be working (no template literal tokens found)');
+          updateStatus('Token types found: ' + tokens.map(line => line.map(t => t.type).join(',')).join(';'));
+        }
+      } catch (tokenError) {
+        updateStatus('X Tokenization failed: ' + tokenError.message);
+      }
+    }
+
+    // Load available themes
+    updateStatus('Loading themes...');
     await ExtendableCodeEditor.loadThemes(() => Promise.resolve(themes));
+    updateStatus('Themes loaded');
 
-    // Set initial theme
-    ExtendableCodeEditor.changeTheme('vscode-light');
+    // Set initial theme from the selected option in HTML
+    const initialTheme = themeSelector.value || 'github-light';
+    ExtendableCodeEditor.changeTheme(initialTheme);
+
+    // Apply light/dark class to editors-container based on initial theme
+    const editorsContainer = document.querySelector('.editors-container');
+    if (initialTheme.includes('dark')) {
+      editorsContainer.classList.remove('light');
+      editorsContainer.classList.add('dark');
+    } else {
+      editorsContainer.classList.remove('dark');
+      editorsContainer.classList.add('light');
+    }
+
+    updateStatus(`Theme set to ${initialTheme}`);
+
+    // Set the sample code back
+    if (model) {
+      model.setValue(sampleCode.javascript);
+    }
 
     updateStatus('Editor initialized successfully');
 
@@ -103,6 +757,7 @@ async function initEditor() {
   } catch (error) {
     console.error('Failed to initialize editor:', error);
     updateStatus(`Error: ${error.message}`);
+    updateStatus(`Stack: ${error.stack}`);
   }
 }
 
@@ -123,6 +778,38 @@ function setupEventListeners() {
     }
 
     updateStatus(`Theme changed to ${theme}`);
+  });
+
+  // Language selector
+  languageSelector.addEventListener('change', (e) => {
+    const selectedValue = e.target.value;
+
+    // Map display names to Monaco language IDs and sample code keys
+    const languageMap = {
+      'javascript': { monacoId: 'javascript', codeKey: 'javascript' },
+      'python': { monacoId: 'python', codeKey: 'python' },
+      'jsx': { monacoId: 'javascriptreact', codeKey: 'jsx' }
+    };
+
+    const config = languageMap[selectedValue];
+    if (!config) {
+      updateStatus(`Unknown language: ${selectedValue}`);
+      return;
+    }
+
+    const code = sampleCode[config.codeKey];
+    if (!code) {
+      updateStatus(`No sample code for: ${config.codeKey}`);
+      return;
+    }
+
+    // Update the editor model
+    const model = editor.editor.getModel();
+    if (model) {
+      model.setValue(code);
+      monaco.editor.setModelLanguage(model, config.monacoId);
+      updateStatus(`Language changed to ${config.monacoId} (${selectedValue})`);
+    }
   });
 
   // Set initial button text based on feature state
@@ -215,6 +902,43 @@ function setupEventListeners() {
     if (featureState.highlight) {
       editor.eventChannel.emit('editor.highlight', []);
       updateStatus('Cleared all highlights');
+    }
+  });
+
+  // Debug TextMate button
+  debugTextMateBtn.addEventListener('click', async () => {
+    updateStatus('=== TextMate Debug Information ===');
+
+    try {
+      // Check if TextMate service is initialized
+      const { TextMateService } = await import('../src/textmate/index.js');
+      const service = TextMateService.getInstance();
+      updateStatus('OK TextMate service is initialized');
+
+      // Check current model language
+      const model = editor.editor.getModel();
+      const currentLanguage = model ? monaco.editor.getModel(model.uri)?.getLanguageId() || model.getLanguageId() : 'unknown';
+      updateStatus('Current language: ' + currentLanguage);
+
+      // Check if model has tokens (indicates TextMate is working)
+      if (model) {
+        const lineCount = model.getLineCount();
+        updateStatus('Model has ' + lineCount + ' lines');
+
+        // Get tokenization for first line to see if TextMate is working
+        const firstLineTokens = monaco.editor.tokenize(model.getLineContent(1), currentLanguage);
+        updateStatus('First line tokens: ' + JSON.stringify(firstLineTokens));
+      }
+
+      // Test setting a complex code sample that should show TextMate differences
+      const testCode = '// TextMate Test Code\nconst greeting = `Hello ${name}!`;\nasync function test() { await fetch("/api"); }';
+
+      model.setValue(testCode);
+      updateStatus('OK Set test code - check if syntax highlighting is enhanced');
+
+    } catch (error) {
+      updateStatus('X TextMate debug failed: ' + error.message);
+      console.error('TextMate debug error:', error);
     }
   });
 

@@ -1,6 +1,50 @@
 # Monaco-Ext Editor
 
-A highly customizable and extensible code editor built on top of Monaco Editor (the same editor that powers VS Code). This library provides a clean and simple API to enhance your editing experience with features like line selection, read-only lines, auto-resize, and highlighting.
+A highly customizable and extensible code editor built on top of Monaco Editor (the same editor that powers VS Code). This library provides a clean and simple API to enhance your editing experience with features like line selection, read-only lines, auto-resize, highlighting, and **TextMate syntax highlighting**.
+
+## Features
+
+✨ **TextMate Syntax Highlighting**: Enhanced syntax highlighting using TextMate grammars for JavaScript, JSX/React, and Python
+🎨 **Multiple Themes**: Built-in dark and light themes
+🔧 **Extensible Architecture**: Easy-to-use feature system
+📝 **Read-Only Lines**: Make specific lines non-editable
+🖱️ **Line Selection Events**: Handle line click events
+🎯 **Dynamic Highlighting**: Highlight specific lines
+📏 **Auto-Resize**: Automatically adjust editor height based on content
+
+## Installation
+
+```bash
+npm install monaco-ext monaco-editor --save
+```
+
+## TextMate Integration
+
+Monaco-Ext now includes built-in TextMate syntax highlighting support for enhanced syntax highlighting capabilities:
+
+### Supported Languages
+
+- **JavaScript** (`javascript`, `js`) - Enhanced ES6+ syntax highlighting
+- **JSX/React** (`javascriptreact`, `jsx`) - Full React component highlighting
+- **Python** (`python`, `py`) - Enhanced Python syntax highlighting
+
+### Basic Usage with TextMate
+
+```javascript
+import { ExtendableCodeEditor } from 'monaco-ext';
+
+const editor = new ExtendableCodeEditor(element, {
+  language: 'javascript', // or 'jsx', 'python'
+  value: 'const hello = "world";',
+  enableTextMate: true, // Default: true
+});
+
+// Get supported languages
+const languages = ExtendableCodeEditor.getSupportedLanguages();
+console.log(languages); // ['javascript', 'js', 'javascriptreact', 'jsx', 'python', 'py']
+```
+
+📖 **[Read the full TextMate Integration Guide →](docs/TEXTMATE_INTEGRATION.md)**
 
 ## Installation
 

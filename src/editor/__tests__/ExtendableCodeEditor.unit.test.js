@@ -16,7 +16,7 @@ describe('ExtendableCodeEditor', () => {
 
   beforeEach(() => {
     element = document.createElement('div')
-    props = { test: 'value' }
+    props = { test: 'value', enableTextMate: false } // Disable TextMate in tests
 
     // Clear all mocks before each test
     jest.clearAllMocks()
@@ -81,7 +81,7 @@ describe('ExtendableCodeEditor', () => {
 
       expect(() => {
         editor.features.add('_methods', feature)
-      }).toThrow("The name '_methods' is already used")
+      }).toThrow("The name '_methods' is reserved. Please use another feature name")
     })
 
     it('should throw error when adding feature with existing name', () => {

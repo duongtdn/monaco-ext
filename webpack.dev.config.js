@@ -17,6 +17,11 @@ module.exports = {
         'monaco-ext': path.resolve(__dirname, 'src'),
         // 'monaco-ext/themes': path.resolve(__dirname, 'themes'),
       },
+      fallback: {
+        "path": require.resolve("path-browserify"),
+        "fs": false,
+        "util": false
+      }
     },
     module: {
       rules: [
@@ -28,6 +33,14 @@ module.exports = {
         {
           test: /\.css$/,
 				  use: ['style-loader', 'css-loader']
+        },
+        {
+          test: /\.wasm$/,
+          type: 'asset/resource'
+        },
+        {
+          test: /\.tmLanguage\.json$/,
+          type: 'json'
         }
       ]
     },

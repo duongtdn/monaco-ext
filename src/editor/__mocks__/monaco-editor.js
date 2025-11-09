@@ -18,6 +18,20 @@ const editor = {
   colorizeElement: jest.fn()
 };
 
+const languages = {
+  getLanguages: jest.fn().mockReturnValue([
+    { id: 'javascript', aliases: ['JavaScript', 'javascript', 'js'] },
+    { id: 'python', aliases: ['Python', 'python', 'py'] },
+    { id: 'html', aliases: ['HTML', 'html'] },
+    { id: 'css', aliases: ['CSS', 'css'] }
+  ]),
+  register: jest.fn(),
+  setTokensProvider: jest.fn(),
+  setMonarchTokensProvider: jest.fn(),
+  setLanguageConfiguration: jest.fn()
+};
+
 module.exports = {
-  editor
+  editor,
+  languages
 };
