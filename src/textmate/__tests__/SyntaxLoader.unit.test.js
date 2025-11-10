@@ -22,6 +22,21 @@ jest.mock('../../syntaxes/python/MagicPython.tmLanguage.json', () => ({
   name: 'Python'
 }), { virtual: true });
 
+jest.mock('../../syntaxes/typescript/TypeScript.tmLanguage.json', () => ({
+  scopeName: 'source.ts',
+  name: 'TypeScript'
+}), { virtual: true });
+
+jest.mock('../../syntaxes/json/JSON.tmLanguage.json', () => ({
+  scopeName: 'source.json',
+  name: 'JSON'
+}), { virtual: true });
+
+jest.mock('../../syntaxes/xml/XML.tmLanguage.json', () => ({
+  scopeName: 'text.xml',
+  name: 'XML'
+}), { virtual: true });
+
 describe('SyntaxLoader', () => {
   let mockTextMateService;
 
@@ -52,9 +67,21 @@ describe('SyntaxLoader', () => {
           grammar: expect.objectContaining({ scopeName: 'source.js.jsx' }),
           languages: ['typescriptreact']
         },
+        'source.ts': {
+          grammar: expect.objectContaining({ scopeName: 'source.ts' }),
+          languages: ['typescript']
+        },
         'source.python': {
           grammar: expect.objectContaining({ scopeName: 'source.python' }),
           languages: ['python']
+        },
+        'source.json': {
+          grammar: expect.objectContaining({ scopeName: 'source.json' }),
+          languages: ['json', 'jsonc']
+        },
+        'text.xml': {
+          grammar: expect.objectContaining({ scopeName: 'text.xml' }),
+          languages: ['xml']
         }
       });
     });
@@ -65,8 +92,8 @@ describe('SyntaxLoader', () => {
       const result = await SyntaxLoader.loadAll();
 
       expect(TextMateService.initialize).toHaveBeenCalledTimes(1);
-      expect(mockTextMateService.loadGrammar).toHaveBeenCalledTimes(4); // 4 grammars now
-      expect(mockTextMateService.registerLanguage).toHaveBeenCalledTimes(4); // 1 language per grammar
+      expect(mockTextMateService.loadGrammar).toHaveBeenCalledTimes(7); // 7 grammars now
+      expect(mockTextMateService.registerLanguage).toHaveBeenCalledTimes(8); // Total language registrations
       expect(result).toBe(mockTextMateService);
     });
 
@@ -108,6 +135,37 @@ describe('SyntaxLoader', () => {
         expect.objectContaining({ scopeName: 'source.js.jsx' })
       );
       expect(mockTextMateService.registerLanguage).toHaveBeenCalledWith('typescriptreact', 'source.tsx');
+    });
+
+    it('should load TypeScript grammar and register languages', async () => {
+      await SyntaxLoader.loadAll();
+
+      expect(mockTextMateService.loadGrammar).toHaveBeenCalledWith(
+        'source.ts',
+        expect.objectContaining({ scopeName: 'source.ts' })
+      );
+      expect(mockTextMateService.registerLanguage).toHaveBeenCalledWith('typescript', 'source.ts');
+    });
+
+    it('should load JSON grammar and register languages', async () => {
+      await SyntaxLoader.loadAll();
+
+      expect(mockTextMateService.loadGrammar).toHaveBeenCalledWith(
+        'source.json',
+        expect.objectContaining({ scopeName: 'source.json' })
+      );
+      expect(mockTextMateService.registerLanguage).toHaveBeenCalledWith('json', 'source.json');
+      expect(mockTextMateService.registerLanguage).toHaveBeenCalledWith('jsonc', 'source.json');
+    });
+
+    it('should load XML grammar and register languages', async () => {
+      await SyntaxLoader.loadAll();
+
+      expect(mockTextMateService.loadGrammar).toHaveBeenCalledWith(
+        'text.xml',
+        expect.objectContaining({ scopeName: 'text.xml' })
+      );
+      expect(mockTextMateService.registerLanguage).toHaveBeenCalledWith('xml', 'text.xml');
     });
 
     it('should handle loading errors', async () => {
@@ -164,7 +222,11 @@ describe('SyntaxLoader', () => {
         'javascript',
         'javascriptreact',
         'typescriptreact',
-        'python'
+        'typescript',
+        'python',
+        'json',
+        'jsonc',
+        'xml',
       ]);
     });
 

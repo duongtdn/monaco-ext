@@ -4,7 +4,7 @@ A highly customizable and extensible code editor built on top of Monaco Editor (
 
 ## Features
 
-✨ **TextMate Syntax Highlighting**: Enhanced syntax highlighting using TextMate grammars for JavaScript, JSX/React, and Python
+✨ **TextMate Syntax Highlighting**: Enhanced syntax highlighting using TextMate grammars for JavaScript, TypeScript, JSX/React, Python, JSON, and XML
 🎨 **Multiple Themes**: Built-in dark and light themes
 🔧 **Extensible Architecture**: Easy-to-use feature system
 📝 **Read-Only Lines**: Make specific lines non-editable
@@ -25,9 +25,13 @@ Monaco-Ext now includes built-in TextMate syntax highlighting support for enhanc
 ### Supported Languages
 
 - **JavaScript** (`javascript`, `js`) - Enhanced ES6+ syntax highlighting
+- **TypeScript** (`typescript`, `ts`) - Full TypeScript syntax highlighting with types, interfaces, and generics
 - **JSX/React** (`javascriptreact`, `jsx`) - Full React component highlighting
 - **TypeScript React** (`typescriptreact`, `tsx`) - TypeScript JSX syntax highlighting
 - **Python** (`python`, `py`) - Enhanced Python syntax highlighting
+- **JSON** (`json`) - JSON syntax highlighting with proper string and value highlighting
+- **JSON with Comments** (`jsonc`) - JSON with comment support
+- **XML** (`xml`) - XML syntax highlighting with tags, attributes, and namespaces
 
 ### Basic Usage with TextMate
 
@@ -35,14 +39,14 @@ Monaco-Ext now includes built-in TextMate syntax highlighting support for enhanc
 import { ExtendableCodeEditor } from 'monaco-ext';
 
 const editor = new ExtendableCodeEditor(element, {
-  language: 'javascript', // or 'jsx', 'tsx', 'python'
-  value: 'const hello = "world";',
+  language: 'typescript', // or 'javascript', 'jsx', 'tsx', 'python', 'json', 'xml'
+  value: 'const hello: string = "world";',
   enableTextMate: true, // Default: true
 });
 
 // Get supported languages
 const languages = ExtendableCodeEditor.getSupportedLanguages();
-console.log(languages); // ['javascript', 'javascriptreact', 'typescriptreact', 'python']
+console.log(languages); // ['javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'python', 'json', 'jsonc', 'xml']
 ```
 
 📖 **[Read the full TextMate Integration Guide →](docs/TEXTMATE_INTEGRATION.md)**

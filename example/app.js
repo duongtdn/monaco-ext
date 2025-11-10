@@ -605,7 +605,493 @@ const ValidatedEmailComponent = withValidation(EmailComponent, {
 
 export default UserProfile;
 export { withValidation, ValidatedEmailComponent };
-`
+`,
+
+  typescript: `// Monaco-Ext TypeScript Demo with Enhanced Syntax Highlighting
+// This demonstrates TypeScript-specific features
+
+// Interface definitions
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  isActive?: boolean; // Optional property
+  roles: Role[];
+}
+
+interface Role {
+  id: number;
+  name: string;
+  permissions: string[];
+}
+
+// Type aliases and unions
+type Status = 'active' | 'inactive' | 'pending';
+type ID = string | number;
+
+// Generic interface
+interface Repository<T> {
+  findById(id: ID): Promise<T | null>;
+  save(entity: T): Promise<T>;
+  delete(id: ID): Promise<boolean>;
+}
+
+// Enum with string values
+enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+  MODERATOR = 'moderator'
+}
+
+// Class with TypeScript features
+class UserService implements Repository<User> {
+  private users: Map<ID, User> = new Map();
+
+  constructor(private readonly config: { debug: boolean }) {}
+
+  async findById(id: ID): Promise<User | null> {
+    const user = this.users.get(id);
+    if (this.config.debug) {
+      console.log(\`Finding user with ID: \${id}\`);
+    }
+    return user ?? null;
+  }
+
+  async save(user: User): Promise<User> {
+    // Input validation with type guards
+    if (!this.isValidUser(user)) {
+      throw new Error('Invalid user data');
+    }
+
+    this.users.set(user.id, { ...user });
+    return user;
+  }
+
+  async delete(id: ID): Promise<boolean> {
+    return this.users.delete(id);
+  }
+
+  private isValidUser(user: any): user is User {
+    return (
+      typeof user === 'object' &&
+      typeof user.id === 'number' &&
+      typeof user.name === 'string' &&
+      typeof user.email === 'string' &&
+      Array.isArray(user.roles)
+    );
+  }
+
+  // Generic method with constraints
+  async findByProperty<K extends keyof User>(
+    property: K,
+    value: User[K]
+  ): Promise<User[]> {
+    const result: User[] = [];
+    for (const user of this.users.values()) {
+      if (user[property] === value) {
+        result.push(user);
+      }
+    }
+    return result;
+  }
+}
+
+// Advanced TypeScript features
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
+type UserUpdate = DeepPartial<Pick<User, 'name' | 'email' | 'isActive'>>;
+
+// Decorator (experimental)
+function log(target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  const method = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    console.log(\`Calling \${propertyName} with arguments:\`, args);
+    return method.apply(this, args);
+  };
+}
+
+// Async/await with proper typing
+async function fetchUserData(userId: ID): Promise<User | null> {
+  try {
+    const service = new UserService({ debug: true });
+    const user = await service.findById(userId);
+
+    if (user) {
+      console.log(\`Found user: \${user.name} <\${user.email}>\`);
+      return user;
+    }
+
+    console.log('User not found');
+    return null;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw error;
+  }
+}
+
+// Utility types and conditional types
+type NonNullable<T> = T extends null | undefined ? never : T;
+type ApiResponse<T> = {
+  data: T;
+  status: 'success' | 'error';
+  message?: string;
+};
+
+// Module augmentation example
+declare global {
+  interface Array<T> {
+    findByProperty<K extends keyof T>(property: K, value: T[K]): T | undefined;
+  }
+}
+
+// Implementation would extend Array prototype (not shown for brevity)
+
+// Usage examples
+const userService = new UserService({ debug: true });
+
+const sampleUser: User = {
+  id: 1,
+  name: 'John Doe',
+  email: 'john.doe@example.com',
+  isActive: true,
+  roles: [
+    {
+      id: 1,
+      name: UserRole.USER,
+      permissions: ['read', 'write']
+    }
+  ]
+};
+
+// Type-safe operations
+userService.save(sampleUser).then(savedUser => {
+  console.log('User saved:', savedUser);
+});
+
+fetchUserData(1).then(user => {
+  if (user) {
+    console.log(\`User status: \${user.isActive ? 'Active' : 'Inactive'}\`);
+  }
+});
+`,
+
+  json: `{
+  "name": "monaco-ext-demo",
+  "version": "1.0.0",
+  "description": "Monaco Editor Extended with TextMate syntax highlighting",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "webpack serve --config webpack.dev.config.js",
+    "build": "webpack --mode=production",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/",
+    "format": "prettier --write src/"
+  },
+  "keywords": [
+    "monaco-editor",
+    "textmate",
+    "syntax-highlighting",
+    "code-editor",
+    "web-editor"
+  ],
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com",
+    "url": "https://github.com/yourusername"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/monaco-ext.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/monaco-ext/issues"
+  },
+  "homepage": "https://github.com/yourusername/monaco-ext#readme",
+  "dependencies": {
+    "monaco-editor": "^0.45.0",
+    "vscode-textmate": "^9.0.0",
+    "vscode-oniguruma": "^2.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "babel-loader": "^9.1.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.0",
+    "webpack-dev-server": "^4.15.0",
+    "html-webpack-plugin": "^5.5.0",
+    "css-loader": "^6.8.0",
+    "style-loader": "^3.3.0",
+    "file-loader": "^6.2.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "jest": "^29.7.0",
+    "eslint": "^8.52.0",
+    "prettier": "^3.0.0",
+    "@types/jest": "^29.5.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"],
+    "moduleNameMapping": {
+      "\\\\.(css|less|scss|sass)$": "identity-obj-proxy"
+    },
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.test.{js,jsx,ts,tsx}",
+      "!src/**/index.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    }
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "jest": true
+    },
+    "extends": ["eslint:recommended"],
+    "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-console": "warn",
+      "no-unused-vars": "error",
+      "prefer-const": "error"
+    }
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5"
+  }
+}`,
+
+  xml: `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC
+  "-//Apache Software Foundation//DTD Log4J Configuration//EN"
+  "http://logging.apache.org/log4j/docs/dtd/log4j.dtd">
+
+<!-- Monaco-Ext XML Demo with TextMate Syntax Highlighting -->
+<configuration xmlns="http://example.com/config"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://example.com/config config.xsd">
+
+  <!-- Application Configuration -->
+  <appSettings>
+    <add key="applicationName" value="Monaco-Ext Demo" />
+    <add key="version" value="1.0.0" />
+    <add key="debug" value="true" />
+    <add key="maxUsers" value="1000" />
+  </appSettings>
+
+  <!-- Database Configuration -->
+  <connectionStrings>
+    <add name="defaultConnection"
+         connectionString="Server=localhost;Database=MonacoExtDemo;Trusted_Connection=true;"
+         providerName="System.Data.SqlClient" />
+    <add name="redisConnection"
+         connectionString="localhost:6379"
+         providerName="Redis.Client" />
+  </connectionStrings>
+
+  <!-- Logging Configuration -->
+  <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <!-- Console Appender -->
+    <appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+      <param name="Target" value="System.out"/>
+      <layout class="org.apache.log4j.PatternLayout">
+        <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/>
+      </layout>
+    </appender>
+
+    <!-- File Appender -->
+    <appender name="FileAppender" class="org.apache.log4j.FileAppender">
+      <param name="File" value="logs/application.log"/>
+      <param name="Append" value="true"/>
+      <layout class="org.apache.log4j.PatternLayout">
+        <param name="ConversionPattern" value="%d{ISO8601} %-5p %c{1} - %m%n"/>
+      </layout>
+    </appender>
+
+    <!-- Root Logger -->
+    <root>
+      <priority value="INFO"/>
+      <appender-ref ref="ConsoleAppender"/>
+      <appender-ref ref="FileAppender"/>
+    </root>
+  </log4j:configuration>
+
+  <!-- Feature Configuration -->
+  <features>
+    <feature name="syntax-highlighting" enabled="true">
+      <settings>
+        <theme>vs-dark</theme>
+        <languages>
+          <language id="javascript" enabled="true" />
+          <language id="typescript" enabled="true" />
+          <language id="python" enabled="true" />
+          <language id="json" enabled="true" />
+          <language id="xml" enabled="true" />
+        </languages>
+      </settings>
+    </feature>
+
+    <feature name="auto-resize" enabled="false">
+      <settings>
+        <minHeight>200</minHeight>
+        <maxHeight>800</maxHeight>
+      </settings>
+    </feature>
+
+    <feature name="line-selection" enabled="true">
+      <settings>
+        <multiSelect>true</multiSelect>
+        <highlightColor>#3399ff</highlightColor>
+      </settings>
+    </feature>
+  </features>
+
+  <!-- User Preferences -->
+  <userPreferences>
+    <preference key="editor.theme" value="github-dark" />
+    <preference key="editor.fontSize" value="14" />
+    <preference key="editor.wordWrap" value="on" />
+    <preference key="editor.minimap.enabled" value="true" />
+    <preference key="editor.lineNumbers" value="on" />
+  </userPreferences>
+
+  <!-- API Configuration -->
+  <api baseUrl="https://api.example.com/v1">
+    <endpoints>
+      <endpoint name="users"
+                url="/users"
+                method="GET"
+                timeout="30000"
+                retries="3" />
+      <endpoint name="createUser"
+                url="/users"
+                method="POST"
+                timeout="10000" />
+      <endpoint name="updateUser"
+                url="/users/{id}"
+                method="PUT"
+                timeout="10000" />
+      <endpoint name="deleteUser"
+                url="/users/{id}"
+                method="DELETE"
+                timeout="5000" />
+    </endpoints>
+
+    <authentication type="bearer">
+      <token>your-api-token-here</token>
+    </authentication>
+  </api>
+
+  <!-- Performance Settings -->
+  <performance>
+    <cache enabled="true" ttl="3600" maxSize="1000" />
+    <compression enabled="true" level="6" />
+    <monitoring enabled="true">
+      <metrics>
+        <metric name="requests_per_second" enabled="true" />
+        <metric name="response_time" enabled="true" />
+        <metric name="error_rate" enabled="true" />
+      </metrics>
+    </monitoring>
+  </performance>
+
+  <!-- Security Configuration -->
+  <security>
+    <cors enabled="true">
+      <allowedOrigins>
+        <origin>http://localhost:3000</origin>
+        <origin>https://example.com</origin>
+      </allowedOrigins>
+      <allowedMethods>
+        <method>GET</method>
+        <method>POST</method>
+        <method>PUT</method>
+        <method>DELETE</method>
+      </allowedMethods>
+    </cors>
+
+    <rateLimit>
+      <rule path="/api/*" requests="100" window="60" />
+      <rule path="/auth/*" requests="10" window="60" />
+    </rateLimit>
+  </security>
+
+  <!-- Data Processing Pipeline -->
+  <pipeline>
+    <stages>
+      <stage name="validation" order="1" enabled="true">
+        <processor type="schema-validator">
+          <config schemaFile="schemas/input.xsd" />
+        </processor>
+      </stage>
+
+      <stage name="transformation" order="2" enabled="true">
+        <processor type="xslt-transformer">
+          <config>
+            <stylesheet>transforms/normalize.xsl</stylesheet>
+            <parameters>
+              <param name="version" value="2.0" />
+              <param name="strict" value="true" />
+            </parameters>
+          </config>
+        </processor>
+      </stage>
+
+      <stage name="enrichment" order="3" enabled="true">
+        <processor type="data-enricher">
+          <config>
+            <source type="database" connection="defaultConnection" />
+            <lookupFields>
+              <field name="userId" target="user.details" />
+              <field name="categoryId" target="category.info" />
+            </lookupFields>
+          </config>
+        </processor>
+      </stage>
+    </stages>
+  </pipeline>
+
+  <!-- Custom Configuration Section -->
+  <custom>
+    <![CDATA[
+      This is a CDATA section that can contain any text,
+      including special characters like < > & " '
+      and even XML-like content that won't be parsed:
+
+      <not-real-xml>
+        <fake-element attribute="value">Content</fake-element>
+      </not-real-xml>
+    ]]>
+  </custom>
+
+</configuration>`
 };
 
 // DOM elements
@@ -787,8 +1273,11 @@ function setupEventListeners() {
     // Map display names to Monaco language IDs and sample code keys
     const languageMap = {
       'javascript': { monacoId: 'javascript', codeKey: 'javascript' },
+      'typescript': { monacoId: 'typescript', codeKey: 'typescript' },
       'python': { monacoId: 'python', codeKey: 'python' },
-      'jsx': { monacoId: 'javascriptreact', codeKey: 'jsx' }
+      'jsx': { monacoId: 'javascriptreact', codeKey: 'jsx' },
+      'json': { monacoId: 'json', codeKey: 'json' },
+      'xml': { monacoId: 'xml', codeKey: 'xml' }
     };
 
     const config = languageMap[selectedValue];

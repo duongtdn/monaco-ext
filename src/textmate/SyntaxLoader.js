@@ -7,6 +7,9 @@ import * as monaco from 'monaco-editor'
 import JavaScriptGrammar from './syntaxes/javascript/JavaScript.tmLanguage.json'
 import JavaScriptReactGrammar from './syntaxes/javascript/JavaScriptReact.tmLanguage.json'
 import PythonGrammar from './syntaxes/python/MagicPython.tmLanguage.json'
+import TypeScriptGrammar from './syntaxes/typescript/TypeScript.tmLanguage.json'
+import JSONGrammar from './syntaxes/json/JSON.tmLanguage.json'
+import XMLGrammar from './syntaxes/xml/XML.tmLanguage.json'
 
 export default class SyntaxLoader {
   static grammars = {
@@ -22,9 +25,21 @@ export default class SyntaxLoader {
       grammar: JavaScriptReactGrammar, // Use same grammar for tsx
       languages: ['typescriptreact']
     },
+    'source.ts': {
+      grammar: TypeScriptGrammar,
+      languages: ['typescript']
+    },
     'source.python': {
       grammar: PythonGrammar,
       languages: ['python']
+    },
+    'source.json': {
+      grammar: JSONGrammar,
+      languages: ['json', 'jsonc']
+    },
+    'text.xml': {
+      grammar: XMLGrammar,
+      languages: ['xml']
     }
   }
 
@@ -36,7 +51,7 @@ export default class SyntaxLoader {
       const textMateService = await TextMateService.initialize()
 
       // Load base JavaScript grammar first, then others
-      const loadOrder = ['source.js', 'source.python', 'source.js.jsx', 'source.tsx']
+      const loadOrder = ['source.js', 'source.python', 'source.js.jsx', 'source.tsx', 'source.ts', 'source.json', 'text.xml']
 
       for (const scopeName of loadOrder) {
         const config = SyntaxLoader.grammars[scopeName]
@@ -74,6 +89,11 @@ export default class SyntaxLoader {
         aliases: ['JavaScript React', 'jsx', 'react']
       },
       {
+        id: 'typescript',
+        extensions: ['.ts'],
+        aliases: ['TypeScript', 'typescript', 'ts']
+      },
+      {
         id: 'typescriptreact',
         extensions: ['.tsx'],
         aliases: ['TypeScript React', 'tsx']
@@ -82,6 +102,21 @@ export default class SyntaxLoader {
         id: 'python',
         extensions: ['.py', '.pyw', '.pyc', '.pyo', '.pyd', '.pyz'],
         aliases: ['Python', 'python', 'py']
+      },
+      {
+        id: 'json',
+        extensions: ['.json'],
+        aliases: ['JSON', 'json']
+      },
+      {
+        id: 'jsonc',
+        extensions: ['.jsonc'],
+        aliases: ['JSON with Comments', 'jsonc']
+      },
+      {
+        id: 'xml',
+        extensions: ['.xml', '.xsd', '.xsl', '.xslt', '.wsdl'],
+        aliases: ['XML', 'xml']
       }
     ]
 
