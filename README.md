@@ -1,26 +1,26 @@
 # Monaco-Ext Editor
 
-A highly customizable and extensible code editor built on top of Monaco Editor (the same editor that powers VS Code). This library provides a clean and simple API to enhance your editing experience with features like line selection, read-only lines, auto-resize, highlighting, and **TextMate syntax highlighting**.
+A highly customizable and extensible code editor built on top of Monaco Editor.
 
 ## Features
 
-✨ **TextMate Syntax Highlighting**: Enhanced syntax highlighting using TextMate grammars for JavaScript, TypeScript, JSX/React, Python, JSON, and XML
-🎨 **Multiple Themes**: Built-in dark and light themes
-🔧 **Extensible Architecture**: Easy-to-use feature system
-📝 **Read-Only Lines**: Make specific lines non-editable
-🖱️ **Line Selection Events**: Handle line click events
-🎯 **Dynamic Highlighting**: Highlight specific lines
-📏 **Auto-Resize**: Automatically adjust editor height based on content
+- **Extensible Architecture**: Easy-to-use feature system
+- **Built-in feature: Read-Only Lines**: Make specific lines non-editable
+- **Built-in feature: Line Selection Events**: Handle line click events
+- **Built-in feature: Dynamic Highlighting**: Programmatically highlight specific lines
+- **Built-in feature: Auto-Resize**: Automatically adjust editor height based on content
+- **Built-in Themes**: Built-in dark and light themes
+- **TextMate Syntax Highlighting**: Enhanced syntax highlighting using TextMate grammars for JavaScript, TypeScript, JSX/React, Python, JSON, and XML
 
 ## Installation
 
 ```bash
-npm install monaco-ext monaco-editor --save
+npm install monaco-ext monaco-editor
 ```
 
 ## TextMate Integration
 
-Monaco-Ext now includes built-in TextMate syntax highlighting support for enhanced syntax highlighting capabilities:
+Monaco-Ext includes built-in TextMate syntax highlighting support for enhanced syntax highlighting capabilities:
 
 ### Supported Languages
 
@@ -49,21 +49,13 @@ const languages = ExtendableCodeEditor.getSupportedLanguages();
 console.log(languages); // ['javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'python', 'json', 'jsonc', 'xml']
 ```
 
-📖 **[Read the full TextMate Integration Guide →](docs/TEXTMATE_INTEGRATION.md)**
-
-## Installation
-
-```bash
-npm install monaco-ext monaco-editor --save
-```
-
 ## Example Demo
 
 ```bash
-npm start
+npm run example
 ```
 
-Open browser at `localhost:3800`
+Open your browser at `localhost:3800`
 
 ## Usage
 
@@ -94,7 +86,7 @@ const themes = import('monaco-ext/dist/themes')
 ExtendableCodeEditor.loadThemes(() => Promise.resolve(themes))
   .then(() => {
     // Set a theme
-    ExtendableCodeEditor.changeTheme('github-dark');
+    ExtendableCodeEditor.changeTheme('tealwave-light');
   });
 ```
 
@@ -110,7 +102,7 @@ const readOnlyLines = editor.features.add('readOnlyLines', new ReadOnlyLines([1,
 const lineSelection = editor.features.add('lineSelection', new LineSelection());
 
 // Listen to line selection events
-editor.eventChannel.addListener('editor.selectLine', (lineNumber) => {
+editor.addListener('editor.selectLine', (lineNumber) => {
   console.log(`Line ${lineNumber} selected`);
 });
 
@@ -121,7 +113,7 @@ const autoResize = editor.features.add('autoResize', new AutoResizeHeight());
 const highlight = editor.features.add('highlight', new HighLight());
 
 // Highlight specific lines
-editor.eventChannel.emit('editor.highlight', [5, 6, 7]);
+editor.emit('editor.highlight', [5, 6, 7]);
 ```
 
 ### Removing Features
@@ -156,9 +148,9 @@ readOnlyLines.activate([4, 5, 6]);
 readOnlyLines.deactivate();
 ```
 
-#### Required CSS Styles for ReadOnlyLines Features
+#### Required CSS Styles for ReadOnlyLines Feature
 
-You'll need to add appropriate CSS classes to your application to visually indicate read-only lines:
+You will need to add appropriate CSS classes to your application to visually indicate read-only lines:
 
 ```css
 /* Basic styles for read-only lines */
@@ -193,7 +185,7 @@ Adds line selection events that fire when a user clicks on a line.
 const lineSelection = editor.features.add('lineSelection', new LineSelection());
 
 // Listen to line selection events
-editor.eventChannel.addListener('editor.selectLine', (lineNumber) => {
+editor.addListener('editor.selectLine', (lineNumber) => {
   console.log(`Line ${lineNumber} selected`);
 });
 ```
@@ -207,12 +199,12 @@ Allows dynamically highlighting specific lines.
 const highlight = editor.features.add('highlight', new HighLight());
 
 // Highlight lines 5, 6, and 7
-editor.eventChannel.emit('editor.highlight', [5, 6, 7]);
+editor.emit('editor.highlight', [5, 6, 7]);
 ```
 
-#### Required CSS Styles for HighLight Features
+#### Required CSS Styles for HighLight Feature
 
-You'll need to add appropriate CSS classes to your application to visually indicate highlighted lines:
+You will need to add appropriate CSS classes to your application to visually indicate highlighted lines:
 
 ```css
 /* Theme-specific styles for highlighted lines */
@@ -234,7 +226,7 @@ Automatically adjusts the editor's height based on content.
 const autoResize = editor.features.add('autoResize', new AutoResizeHeight());
 
 // Listen to height changes
-editor.eventChannel.addListener('editor.height', (height) => {
+editor.addListener('editor.height', (height) => {
   console.log(`Editor height changed to ${height}px`);
 });
 ```
@@ -245,6 +237,8 @@ editor.eventChannel.addListener('editor.height', (height) => {
 - `github-dark`
 - `solarized-light`
 - `solarized-dark`
+- `tealwave-light`
+- `tealwave-dark`
 
 ## API Reference
 
@@ -274,6 +268,15 @@ new ExtendableCodeEditor(element, options)
 - `loadThemes(Promise)`: Load a set of themes
 - `changeTheme(themeName)`: Change the current theme
 - `colorizeElement(...)`: Colorize a DOM element with code
+- `loadTextMateGrammars()`: Manually load all TextMate grammars
+- `getSupportedLanguages()`: Get an array of supported language identifiers
+
+#### Instance Methods
+
+- `addListener(eventName, callback)`: Add an event listener (wrapper for `eventChannel.addListener`)
+- `removeListener(eventName, callback)`: Remove a specific event listener (wrapper for `eventChannel.removeListener`)
+- `removeAllListeners(eventName)`: Remove all listeners for an event (wrapper for `eventChannel.removeAllListeners`)
+- `emit(eventName, ...args)`: Emit an event through the event channel (wrapper for `eventChannel.emit`)
 
 #### Features API
 
@@ -283,25 +286,44 @@ new ExtendableCodeEditor(element, options)
 
 ### Event System
 
-The editor uses an event channel system for communication:
+The editor uses an event channel system for communication between the editor and features:
 
 ```javascript
-// Add event listener
+// Add event listener (direct access)
 editor.eventChannel.addListener('eventName', callback);
 
-// Remove specific listener
+// Add event listener (convenient wrapper)
+editor.addListener('eventName', callback);
+
+// Remove specific listener (direct access)
 editor.eventChannel.removeListener('eventName', callback);
 
-// Remove all listeners for an event
+// Remove specific listener (convenient wrapper)
+editor.removeListener('eventName', callback);
+
+// Remove all listeners for an event (direct access)
 editor.eventChannel.removeAllListeners('eventName');
 
-// Emit an event
+// Remove all listeners for an event (convenient wrapper)
+editor.removeAllListeners('eventName');
+
+// Emit an event (direct access)
 editor.eventChannel.emit('eventName', ...args);
+
+// Emit an event (convenient wrapper)
+editor.emit('eventName', ...args);
 ```
+
+**Built-in Events:**
+- `editor.selectLine` - Emitted when a line is clicked (requires the LineSelection feature)
+- `editor.highlight` - Listen or emit to highlight specific lines (requires the HighLight feature)
+- `editor.height` - Emitted when editor height changes (requires the AutoResizeHeight feature)
 
 ## Creating Custom Features
 
-You can create custom features by extending the Feature interface:
+You can create custom features by extending the Feature interface. Features have access to the editor instance and event channel for communication.
+
+### Basic Feature Structure
 
 ```javascript
 import { Feature } from 'monaco-ext/features';
@@ -310,15 +332,163 @@ export default class CustomFeature extends Feature {
   activate = () => {
     // Setup your feature here
     // You have access to:
-    // - this.editor: The editor instance
+    // - this.editor: The Monaco editor instance
     // - this.eventChannel: Event communication system
   }
 
   deactivate = () => {
     // Clean up when feature is removed
+    // Always dispose of event listeners and Monaco disposables
   }
 }
 ```
+
+### Communication Patterns
+
+Features communicate with the editor and external code through the event channel. Here are common patterns used by built-in features:
+
+#### Pattern 1: Listening to Events (Input)
+
+Listen to events emitted from external code to trigger feature behavior:
+
+```javascript
+export default class HighLight extends Feature {
+  decorators
+
+  activate = () => {
+    // Listen for highlight requests
+    this.eventChannel.addListener('editor.highlight', lines => {
+      this.decorators && this.decorators.clear();
+      if (lines?.length && lines?.length > 0) {
+        this.decorators = this.applyHighLightDecoration(lines);
+      }
+    })
+  }
+
+  deactivate = () => {
+    this.decorators && this.decorators.clear();
+    // Always clean up listeners
+    this.eventChannel.removeAllListeners('editor.highlight');
+  }
+
+  applyHighLightDecoration = (lines) => {
+    const lineNumberOffset = this.editor.props.lineNumberOffset;
+    const highlights = lines.map(line => line - lineNumberOffset);
+    return this.editor.createDecorationsCollection(
+      highlights.map(index => ({
+        range: { startLineNumber: index, startColumn: 1, endLineNumber: index, endColumn: 1 },
+        options: {
+          isWholeLine: true,
+          className: 'highlight-code-line',
+        }
+      }))
+    );
+  }
+}
+
+// Usage: Emit event from external code
+editor.emit('editor.highlight', [5, 6, 7]);
+```
+
+#### Pattern 2: Emitting Events (Output)
+
+Emit events to notify external code about feature state or user interactions:
+
+```javascript
+export default class LineSelection extends Feature {
+  mouseDownEvent;
+
+  activate = () => {
+    const lineNumberOffset = this.editor.props.lineNumberOffset
+    // Subscribe to Monaco editor events
+    this.mouseDownEvent = this.editor.onMouseDown(e => {
+      if (e.target.detail.isAfterLines === true) {
+        return
+      }
+      // Emit event to notify external code
+      this.eventChannel.emit('editor.selectLine', e.target.range.startLineNumber + lineNumberOffset)
+    })
+  }
+
+  deactivate = () => {
+    // Dispose Monaco editor event subscriptions
+    this.mouseDownEvent && this.mouseDownEvent.dispose()
+  }
+}
+
+// Usage: Listen for events in external code
+editor.addListener('editor.selectLine', (lineNumber) => {
+  console.log(`Line ${lineNumber} was selected`);
+});
+```
+
+#### Pattern 3: Immediate Emission
+
+Emit events immediately during activation to notify about initial state:
+
+```javascript
+export default class AutoResizeHeight extends Feature {
+  activate = () => {
+    const height = this.calculateHeight();
+    // Immediately notify about current height
+    this.eventChannel.emit('editor.height', height);
+  }
+
+  deactivate = () => {
+    // No cleanup needed in this case
+  }
+
+  calculateHeight = () => {
+    const padding = this.editor.getOption(editor.EditorOption.padding);
+    const lineHeight = this.editor.getOption(editor.EditorOption.lineHeight);
+    const lineCount = this.editor.getModel()?.getLineCount() || 1;
+    return this.editor.getTopForLineNumber(lineCount + 1) + lineHeight + padding.top + padding.bottom;
+  }
+}
+
+// Usage: Listen for height changes
+editor.addListener('editor.height', (height) => {
+  document.getElementById('editor-container').style.height = `${height}px`;
+});
+```
+
+#### Pattern 4: Bidirectional Communication
+
+Combine listening and emitting for interactive features:
+
+```javascript
+export default class InteractiveFeature extends Feature {
+  state = null;
+
+  activate = () => {
+    // Listen for commands
+    this.eventChannel.addListener('feature.command', (command) => {
+      this.handleCommand(command);
+      // Emit response
+      this.eventChannel.emit('feature.response', { success: true, state: this.state });
+    });
+  }
+
+  deactivate = () => {
+    this.eventChannel.removeAllListeners('feature.command');
+    this.eventChannel.removeAllListeners('feature.response');
+  }
+
+  handleCommand = (command) => {
+    // Process command and update state
+    this.state = command;
+  }
+}
+```
+
+### Best Practices
+
+1. **Always clean up**: Remove all event listeners and dispose of Monaco subscriptions in `deactivate()`
+2. **Use descriptive event names**: Follow the pattern `target.action` (e.g., `editor.selectLine`, `editor.highlight`)
+3. **Handle line number offsets**: Account for `lineNumberOffset` when working with line numbers
+4. **Validate input**: Check for null/undefined values before processing event data
+5. **Store disposables**: Keep references to Monaco event subscriptions so they can be disposed of properly
+6. **Emit meaningful data**: Provide useful information in event payloads for listeners
 
 ## License
 

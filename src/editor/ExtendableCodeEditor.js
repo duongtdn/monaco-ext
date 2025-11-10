@@ -39,6 +39,11 @@ export default class ExtendableCodeEditor {
   static loadTextMateGrammars = () => SyntaxLoader.loadAll()
   static getSupportedLanguages = () => SyntaxLoader.getSupportedLanguages()
 
+  addListener = (...args) => this.eventChannel.addListener(...args)
+  removeListener = (...args) => this.eventChannel.removeListener(...args)
+  removeAllListeners = (...args) => this.eventChannel.removeAllListeners(...args)
+  emit = (...args) => this.eventChannel.emit(...args)
+
   features = {
 
     _methods: ['_methods', 'add', 'remove', 'list'],
