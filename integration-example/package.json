@@ -1,0 +1,21 @@
+{
+  "name": "monaco-ext-integration-example",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Example showing how to integrate monaco-ext as a dependency",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "install-local": "npm install ../. && npm install"
+  },
+  "dependencies": {
+    "monaco-editor": "^0.52.2",
+    "monaco-ext": "file:.."
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "vite-plugin-monaco-editor": "^1.1.0"
+  }
+}

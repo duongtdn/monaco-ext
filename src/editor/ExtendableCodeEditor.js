@@ -32,7 +32,16 @@ export default class ExtendableCodeEditor {
     }
   }
 
-  static loadThemes = (fn) => fn().then(themes => MonacoEditor.loadThemes(themes))
+  static loadThemes = async (fn) => {
+    // If no function provided, use the built-in themes
+    if (!fn) {
+      const themes = await import('../themes')
+      return MonacoEditor.loadThemes(themes.default)
+    }
+    // Otherwise, use the provided function
+    return fn().then(themes => MonacoEditor.loadThemes(themes))
+  }
+
   static changeTheme = (theme) => MonacoEditor.changeTheme(theme)
   static colorizeElement = (...args) => MonacoEditor.colorizeElement(...args)
 

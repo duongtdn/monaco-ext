@@ -3,7 +3,8 @@
 import TextMateService from './TextMateService'
 import * as monaco from 'monaco-editor'
 
-// Import grammar files
+// Import grammar files (these will be bundled by default)
+// End applications can choose not to use these and provide their own
 import JavaScriptGrammar from './syntaxes/javascript/JavaScript.tmLanguage.json'
 import JavaScriptReactGrammar from './syntaxes/javascript/JavaScriptReact.tmLanguage.json'
 import PythonGrammar from './syntaxes/python/MagicPython.tmLanguage.json'
@@ -22,7 +23,7 @@ export default class SyntaxLoader {
       languages: ['javascriptreact']
     },
     'source.tsx': {
-      grammar: JavaScriptReactGrammar, // Use same grammar for tsx
+      grammar: JavaScriptReactGrammar,
       languages: ['typescriptreact']
     },
     'source.ts': {
@@ -43,22 +44,72 @@ export default class SyntaxLoader {
     }
   }
 
-  static async loadAll() {
+  static _customGrammars = {}
+
+  /**
+   * Register a custom grammar that can be loaded
+   * @param {string} scopeName - The TextMate scope name (e.g., 'source.js')
+   * @param {object} grammar - The grammar data object or a loader function
+   * @param {string[]} languages - Array of Monaco language IDs to associate with this grammar
+   */
+  static registerGrammar(scopeName, grammar, languages) {
+    SyntaxLoader._customGrammars[scopeName] = {
+      grammar,
+      languages
+    }
+  }
+
+  /**
+   * Load all built-in grammars
+   * @param {string[]} languages - Optional array of specific languages to load. If not provided, loads all.
+   */
+  static async loadAll(languages = null) {
     try {
       // First ensure all required languages are registered with Monaco
       SyntaxLoader._registerLanguagesWithMonaco()
 
       const textMateService = await TextMateService.initialize()
 
-      // Load base JavaScript grammar first, then others
+      // Determine which grammars to load
+      const allGrammars = { ...SyntaxLoader.grammars, ...SyntaxLoader._customGrammars }
+      const grammarEntries = Object.entries(allGrammars)
+
+      // Filter if specific languages requested
+      const grammarsToLoad = languages
+        ? grammarEntries.filter(([_, config]) =>
+            config.languages.some(lang => languages.includes(lang))
+          )
+        : grammarEntries
+
+      // Load in dependency order (JS first for JSX/TSX)
       const loadOrder = ['source.js', 'source.python', 'source.js.jsx', 'source.tsx', 'source.ts', 'source.json', 'text.xml']
 
       for (const scopeName of loadOrder) {
-        const config = SyntaxLoader.grammars[scopeName]
-        if (config) {
-          await textMateService.loadGrammar(scopeName, config.grammar)
+        const entry = grammarsToLoad.find(([scope]) => scope === scopeName)
+        if (entry) {
+          const [scope, config] = entry
+          const grammarData = typeof config.grammar === 'function'
+            ? await config.grammar()
+            : config.grammar
+
+          await textMateService.loadGrammar(scope, grammarData)
 
           // Register each language variant
+          for (const languageId of config.languages) {
+            await textMateService.registerLanguage(languageId, scope)
+          }
+        }
+      }
+
+      // Load remaining custom grammars not in loadOrder
+      for (const [scopeName, config] of grammarsToLoad) {
+        if (!loadOrder.includes(scopeName)) {
+          const grammarData = typeof config.grammar === 'function'
+            ? await config.grammar()
+            : config.grammar
+
+          await textMateService.loadGrammar(scopeName, grammarData)
+
           for (const languageId of config.languages) {
             await textMateService.registerLanguage(languageId, scopeName)
           }

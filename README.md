@@ -18,6 +18,66 @@ A highly customizable and extensible code editor built on top of Monaco Editor.
 npm install monaco-ext monaco-editor
 ```
 
+## Quick Start
+
+**Important for Vite users**: You MUST add `dedupe: ['monaco-editor']` to your Vite config. See the [Integration Guide](./docs/INTEGRATION_GUIDE.md) for details.
+
+See the [Integration Guide](./docs/INTEGRATION_GUIDE.md) for comprehensive setup instructions for Vite, Webpack, and other build tools.
+
+### Basic Example (Vite)
+
+```javascript
+// 1. Configure vite.config.js (REQUIRED)
+export default defineConfig({
+  resolve: {
+    dedupe: ['monaco-editor'] // ⚠️ CRITICAL for Vite
+  }
+});
+
+// 2. Initialize editor
+import { ExtendableCodeEditor, TextMateService, SyntaxLoader } from 'monaco-ext';
+import onigasmWasm from 'onigasm/lib/onigasm.wasm?url';
+
+async function initEditor() {
+  TextMateService.configure({ wasmPath: onigasmWasm });
+  await SyntaxLoader.loadAll();
+  await ExtendableCodeEditor.loadThemes();
+
+  const editor = new ExtendableCodeEditor(container, {
+    language: 'javascript',
+    value: 'console.log("Hello");',
+    theme: 'github-dark'
+  });
+
+  return editor;
+}
+```
+
+## Examples
+
+### Development Example
+Located in `/example` - uses source code directly for development.
+
+```bash
+npm run example
+```
+
+### Integration Example
+Located in `/integration-example` - demonstrates real-world integration as an npm package using Vite.
+
+```bash
+cd integration-example
+npm run install-local
+npm run dev
+```
+
+## ⚠️ Troubleshooting
+
+**Language switching not working?** This is usually caused by Monaco Editor module duplication. See:
+- [Integration Guide - Troubleshooting](./docs/INTEGRATION_GUIDE.md#troubleshooting)
+
+**Quick fix for Vite users**: Add `dedupe: ['monaco-editor']` to your `vite.config.js`
+
 ## TextMate Integration
 
 Monaco-Ext includes built-in TextMate syntax highlighting support for enhanced syntax highlighting capabilities:

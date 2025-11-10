@@ -1,11 +1,35 @@
 {
   "name": "monaco-ext",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Extend monaco-editor with feature interface",
   "main": "dist/index.js",
+  "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./features": {
+      "import": "./dist/features/index.js",
+      "require": "./dist/features/index.js"
+    },
+    "./dist/textmate": {
+      "import": "./dist/textmate/index.js",
+      "require": "./dist/textmate/index.js"
+    },
+    "./themes/*": "./dist/themes/*",
+    "./syntaxes/*": "./dist/textmate/syntaxes/*"
+  },
+  "files": [
+    "dist/",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && babel src --out-dir dist --source-maps --ignore \"**/__tests__/**,**/__mocks__/**\" && mkdir -p dist/themes && cp src/themes/*.json dist/themes/",
+    "build": "npm run clean && babel src --out-dir dist --source-maps --ignore \"**/__tests__/**,**/__mocks__/**\" && npm run copy-assets",
+    "copy-assets": "mkdir -p dist/themes && cp src/themes/*.json dist/themes/ && mkdir -p dist/textmate/syntaxes && cp -r src/textmate/syntaxes/* dist/textmate/syntaxes/",
     "prepare": "npm run build",
     "prepublishOnly": "npm run build",
     "example": "webpack serve --config webpack.dev.config.js --port 3800 --host 0.0.0.0",

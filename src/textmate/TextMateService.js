@@ -8,6 +8,10 @@ import * as monaco from 'monaco-editor'
 export default class TextMateService {
   static _instance = null
   static _initialized = false
+  static _config = {
+    wasmPath: null,
+    wasmLoader: null
+  }
 
   _registry = null
   _grammars = new Map()
@@ -19,19 +23,34 @@ export default class TextMateService {
     TextMateService._instance = this
   }
 
-  static async initialize() {
+  static configure(config = {}) {
+    TextMateService._config = {
+      ...TextMateService._config,
+      ...config
+    }
+  }
+
+  static async initialize(config = {}) {
     if (TextMateService._initialized) {
       return TextMateService._instance
     }
 
+    // Merge config if provided
+    if (Object.keys(config).length > 0) {
+      TextMateService.configure(config)
+    }
+
     // Load the WASM for oniguruma
     try {
-      // Check if we're in a test environment
-      if (typeof jest !== 'undefined' || process.env.NODE_ENV === 'test') {
-        // In test environment, mock the WASM loading
-        await loadWASM('mocked-wasm-path')
+      if (TextMateService._config.wasmLoader) {
+        // Use custom WASM loader provided by end application
+        const wasmData = await TextMateService._config.wasmLoader()
+        await loadWASM(wasmData)
+      } else if (TextMateService._config.wasmPath) {
+        // Load from custom path
+        await loadWASM(TextMateService._config.wasmPath)
       } else {
-        // In browser/webpack environment
+        // Default: try to load from onigasm package
         const onigasmWasm = await import('onigasm/lib/onigasm.wasm')
         await loadWASM(onigasmWasm.default || onigasmWasm)
       }

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monaco-Ext Integration Example</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1e1e1e;
+      color: #d4d4d4;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid #3e3e3e;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: #888;
+      font-size: 14px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 15px;
+      background: #252526;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    select, button, input {
+      padding: 6px 12px;
+      border: 1px solid #3e3e3e;
+      background: #3c3c3c;
+      color: #d4d4d4;
+      border-radius: 3px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    select:hover, button:hover {
+      background: #4e4e4e;
+    }
+
+    input {
+      width: 80px;
+      cursor: text;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #editor-container {
+      height: 500px;
+      border: 1px solid #3e3e3e;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    #status {
+      margin-top: 20px;
+      padding: 15px;
+      background: #252526;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      max-height: 200px;
+      overflow-y: auto;
+      color: #888;
+    }
+
+    #status .success { color: #4ec9b0; }
+    #status .error { color: #f48771; }
+    #status .warning { color: #dcdcaa; }
+    #status .info { color: #9cdcfe; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #007acc;
+      color: #fff;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 500;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Monaco-Ext Integration Example <span class="badge">Using as Package</span></h1>
+      <p class="subtitle">This example demonstrates integration of monaco-ext as an npm dependency with Vite</p>
+    </header>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="theme-selector">Theme:</label>
+        <select id="theme-selector">
+          <option value="github-light">GitHub Light</option>
+          <option value="github-dark" selected>GitHub Dark</option>
+          <option value="solarized-light">Solarized Light</option>
+          <option value="solarized-dark">Solarized Dark</option>
+          <option value="tealwave-light">Tealwave Light</option>
+          <option value="tealwave-dark">Tealwave Dark</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="language-selector">Language:</label>
+        <select id="language-selector">
+          <option value="javascript" selected>JavaScript</option>
+          <option value="typescript">TypeScript</option>
+          <option value="python">Python</option>
+          <option value="jsx">JSX/React</option>
+          <option value="json">JSON</option>
+          <option value="xml">XML</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <button id="toggle-readonly">Enable Read-only Lines</button>
+        <button id="toggle-linesel">Enable Line Selection</button>
+        <button id="toggle-highlight">Enable Highlight</button>
+      </div>
+
+      <div class="control-group">
+        <input type="number" id="line-input" placeholder="Line #" min="1" value="5">
+        <button id="highlight-line">Highlight Line</button>
+        <button id="clear-highlights">Clear Highlights</button>
+      </div>
+    </div>
+
+    <div id="editor-container"></div>
+
+    <div id="status">
+      <strong>Status Log:</strong><br>
+      Initializing...
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

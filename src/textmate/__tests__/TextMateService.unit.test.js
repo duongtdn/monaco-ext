@@ -7,6 +7,11 @@ jest.mock('onigasm', () => ({
   loadWASM: jest.fn().mockResolvedValue(undefined),
 }));
 
+// Mock the dynamic import for WASM
+jest.mock('onigasm/lib/onigasm.wasm', () => ({
+  default: 'mocked-wasm-data'
+}), { virtual: true });
+
 // Mock monaco-textmate
 jest.mock('monaco-textmate', () => ({
   Registry: jest.fn().mockImplementation((config) => ({
@@ -33,14 +38,15 @@ jest.mock('monaco-editor', () => ({
   }
 }));
 
-// Mock dynamic import for WASM
-global.import = jest.fn();
-
 describe('TextMateService', () => {
   beforeEach(() => {
     // Reset the singleton instance
     TextMateService._instance = null;
     TextMateService._initialized = false;
+    TextMateService._config = {
+      wasmPath: null,
+      wasmLoader: null
+    };
     jest.clearAllMocks();
   });
 
