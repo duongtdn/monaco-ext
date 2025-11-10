@@ -27,6 +27,11 @@ The following languages are supported out of the box:
 - **Scope**: `source.js.jsx`
 - **Features**: Full JSX/React syntax highlighting with component detection
 
+### TypeScript React (TSX)
+- **Languages**: `typescriptreact`, `tsx`
+- **Scope**: `source.tsx`
+- **Features**: TypeScript JSX syntax highlighting for React components
+
 ### Python
 - **Languages**: `python`, `py`
 - **Scope**: `source.python`
@@ -60,7 +65,7 @@ await ExtendableCodeEditor.loadTextMateGrammars();
 
 // Get list of supported languages
 const supportedLanguages = ExtendableCodeEditor.getSupportedLanguages();
-console.log(supportedLanguages); // ['javascript', 'js', 'javascriptreact', 'jsx', 'python', 'py']
+console.log(supportedLanguages); // ['javascript', 'javascriptreact', 'typescriptreact', 'python']
 ```
 
 ### Using Individual Services

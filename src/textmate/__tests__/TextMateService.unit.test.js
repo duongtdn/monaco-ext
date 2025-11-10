@@ -8,17 +8,20 @@ jest.mock('onigasm', () => ({
 }));
 
 // Mock monaco-textmate
-const mockWireTmGrammars = jest.fn().mockResolvedValue(undefined);
 jest.mock('monaco-textmate', () => ({
   Registry: jest.fn().mockImplementation((config) => ({
     loadGrammar: jest.fn().mockResolvedValue({ mockGrammar: true }),
   })),
   parseRawGrammar: jest.fn().mockReturnValue({ mockGrammar: true }),
-  wireTmGrammars: mockWireTmGrammars,
+}));
+
+// Mock monaco-editor-textmate
+jest.mock('monaco-editor-textmate', () => ({
+  wireTmGrammars: jest.fn().mockResolvedValue(undefined),
 }));
 
 // Mock monaco-editor
-global.monaco = {
+jest.mock('monaco-editor', () => ({
   editor: {
     defineTheme: jest.fn(),
     setTheme: jest.fn(),
@@ -28,7 +31,7 @@ global.monaco = {
     setMonarchTokensProvider: jest.fn(),
     setLanguageConfiguration: jest.fn()
   }
-};
+}));
 
 // Mock dynamic import for WASM
 global.import = jest.fn();
@@ -121,20 +124,30 @@ describe('TextMateService', () => {
 
   describe('registerLanguage', () => {
     let service;
+    let mockWireTmGrammars;
 
     beforeEach(async () => {
       service = await TextMateService.initialize();
+      // Get the mocked function
+      const { wireTmGrammars } = require('monaco-editor-textmate');
+      mockWireTmGrammars = wireTmGrammars;
       mockWireTmGrammars.mockClear();
     });
 
     it('should register language with monaco', async () => {
       await service.registerLanguage('javascript', 'source.js');
 
-      expect(mockWireTmGrammars).toHaveBeenCalledWith(
-        global.monaco,
-        service._registry,
-        new Map([['javascript', 'source.js']])
-      );
+      expect(mockWireTmGrammars).toHaveBeenCalledTimes(1);
+
+      // Check the call arguments more flexibly
+      const callArgs = mockWireTmGrammars.mock.calls[0];
+      expect(callArgs).toHaveLength(3);
+      expect(callArgs[0]).toMatchObject({
+        editor: expect.any(Object),
+        languages: expect.any(Object)
+      });
+      expect(callArgs[1]).toBe(service._registry);
+      expect(callArgs[2]).toEqual(new Map([['javascript', 'source.js']]));
     });
 
     it('should handle registration errors', async () => {

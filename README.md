@@ -26,6 +26,7 @@ Monaco-Ext now includes built-in TextMate syntax highlighting support for enhanc
 
 - **JavaScript** (`javascript`, `js`) - Enhanced ES6+ syntax highlighting
 - **JSX/React** (`javascriptreact`, `jsx`) - Full React component highlighting
+- **TypeScript React** (`typescriptreact`, `tsx`) - TypeScript JSX syntax highlighting
 - **Python** (`python`, `py`) - Enhanced Python syntax highlighting
 
 ### Basic Usage with TextMate
@@ -34,14 +35,14 @@ Monaco-Ext now includes built-in TextMate syntax highlighting support for enhanc
 import { ExtendableCodeEditor } from 'monaco-ext';
 
 const editor = new ExtendableCodeEditor(element, {
-  language: 'javascript', // or 'jsx', 'python'
+  language: 'javascript', // or 'jsx', 'tsx', 'python'
   value: 'const hello = "world";',
   enableTextMate: true, // Default: true
 });
 
 // Get supported languages
 const languages = ExtendableCodeEditor.getSupportedLanguages();
-console.log(languages); // ['javascript', 'js', 'javascriptreact', 'jsx', 'python', 'py']
+console.log(languages); // ['javascript', 'javascriptreact', 'typescriptreact', 'python']
 ```
 
 📖 **[Read the full TextMate Integration Guide →](docs/TEXTMATE_INTEGRATION.md)**

@@ -37,6 +37,7 @@
 |----------|-------------|------------|--------------|
 | JavaScript | `javascript`, `js` | `source.js` | `JavaScript.tmLanguage.json` |
 | JSX/React | `javascriptreact`, `jsx` | `source.js.jsx` | `JavaScriptReact.tmLanguage.json` |
+| TypeScript React | `typescriptreact`, `tsx` | `source.tsx` | `JavaScriptReact.tmLanguage.json` |
 | Python | `python`, `py` | `source.python` | `MagicPython.tmLanguage.json` |
 
 ## Key Features
