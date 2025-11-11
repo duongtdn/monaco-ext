@@ -1,6 +1,6 @@
 {
   "name": "monaco-ext",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Extend monaco-editor with feature interface",
   "main": "dist/index.js",
   "module": "dist/index.js",
