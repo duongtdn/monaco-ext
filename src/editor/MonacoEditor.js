@@ -67,4 +67,6 @@ export default class MonacoEditor extends Editor {
 
   getTopForLineNumber = (number) => this.instance && this.instance.getTopForLineNumber(number)
 
+	dispose = () =>this.instance && this.instance.dispose()
+
 }
